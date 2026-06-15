@@ -61,7 +61,8 @@ function pack(nodes: Raw[], gap: number): void {
 }
 
 export function layoutModule(mod: ModuleDoc): MapLayout {
-  const raw: Raw[] = Object.values(mod.types).map((t) => ({ ...t, x: 0, y: 0, r: 16 + t.weight * 5 }))
+  // 半径はメンバ/プロパティ数(weight)に比例（小さな基底＋強めの係数で差を見えやすく）
+  const raw: Raw[] = Object.values(mod.types).map((t) => ({ ...t, x: 0, y: 0, r: 12 + t.weight * 7 }))
   pack(raw, 10)
 
   let minX = Infinity

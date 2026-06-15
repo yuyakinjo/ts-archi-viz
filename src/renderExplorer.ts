@@ -42,15 +42,17 @@ export function renderExplorer(source: string, opts: ExplorerOptions = {}): stri
 .ex .ex-map,.ex .ex-detail{transition:opacity .24s ease,transform .24s ease}
 .ex .leaving{opacity:0;transform:scale(1.08)}
 .ex .entering{opacity:0;transform:scale(0.94)}
-.ex .ex-bar{display:flex;align-items:center;gap:12px;justify-content:center;margin-bottom:2px}
-.ex .ex-back{font:inherit;font-size:12px;padding:4px 10px;cursor:pointer;border:1px solid var(--color-border-secondary);border-radius:var(--border-radius-md);background:var(--color-background-secondary);color:var(--color-text-primary)}
+.ex .ex-bar{display:flex;align-items:center;gap:12px;justify-content:center;margin-bottom:4px}
 .ex .ex-label{font-size:13px;font-weight:500;color:var(--color-text-primary)}
+.ex .ex-body{display:flex;align-items:center;justify-content:center;gap:14px}
 .ex .ex-stage{display:flex;justify-content:center}
+.ex .ex-zoom{display:flex;flex-direction:column;align-items:center;gap:6px;font-size:10px;color:var(--color-text-tertiary)}
+.ex .ex-foot{display:flex;justify-content:flex-end;margin-top:8px}
+.ex .ex-back{font:inherit;font-size:12px;padding:5px 12px;cursor:pointer;border:1px solid var(--color-border-secondary);border-radius:var(--border-radius-md);background:var(--color-background-secondary);color:var(--color-text-primary)}
 .ex svg .mItem,.ex svg .sub{transition:transform .22s ease,opacity .22s ease}
 .ex svg .fade,.ex svg .mLabel,.ex svg .conn{transition:opacity .22s ease}
 .ex svg .dc,.ex svg .mapnode circle{transition:color .22s ease,fill-opacity .15s ease}
-.ex .ex-slider{width:80%;margin:6px auto 0;display:block;accent-color:var(--color-text-primary)}
-.ex .ex-ticks{display:flex;justify-content:space-between;width:80%;margin:0 auto;font-size:11px;color:var(--color-text-tertiary)}
+.ex .ex-slider{-webkit-appearance:slider-vertical;appearance:slider-vertical;writing-mode:vertical-lr;width:6px;height:190px;margin:0;accent-color:var(--color-text-primary);cursor:pointer}
 .ex .ex-legend{text-align:center;font-size:11px;color:var(--color-text-secondary);margin-top:6px}
 .ex .sw{display:inline-block;width:10px;height:10px;border-radius:50%;vertical-align:middle;margin:0 3px 0 10px}
 </style>
@@ -61,11 +63,13 @@ export function renderExplorer(source: string, opts: ExplorerOptions = {}): stri
 </div>
 <div class="ex-map">${mapSvg}</div>
 <div class="ex-detail" style="display:none">
-  <div class="ex-bar"><button class="ex-back">← モジュールへ戻る</button><span class="ex-label">第1層 — 形＋名前</span></div>
-  <div class="ex-stage">${details}</div>
-  <input class="ex-slider" type="range" min="1" max="4" step="0.01" value="1">
-  <div class="ex-ticks"><span>第1層</span><span>第2層</span><span>第3層</span><span>第4層</span></div>
+  <div class="ex-bar"><span class="ex-label">第1層 — 形＋名前</span></div>
+  <div class="ex-body">
+    <div class="ex-stage">${details}</div>
+    <div class="ex-zoom"><span>第1層</span><input class="ex-slider" type="range" min="1" max="4" step="0.01" value="1"><span>第4層</span></div>
+  </div>
   <div class="ex-legend">色＝深度：<span class="sw" style="background:#2563eb"></span>深0<span class="sw" style="background:#0d9488"></span>深1<span class="sw" style="background:#d97706"></span>深2<span class="sw" style="background:#dc2626"></span>深3</div>
+  <div class="ex-foot"><button class="ex-back">← モジュールへ戻る</button></div>
 </div>
 <script>
 (function(){
@@ -79,7 +83,7 @@ export function renderExplorer(source: string, opts: ExplorerOptions = {}): stri
   var root=sel('.ex');
   if(!root)return;
   var titleEl=sel('.ex-title',root), mapWrap=sel('.ex-map',root), detailWrap=sel('.ex-detail',root);
-  var slider=sel('.ex-slider',root), label=sel('.ex-label',root), back=sel('.ex-back',root), stage=sel('.ex-stage',root);
+  var slider=sel('.ex-slider',root), label=sel('.ex-label',root), back=sel('.ex-back',root), body=sel('.ex-body',root);
   var active=null, mode='indent';
 
   function recolor(){
@@ -155,7 +159,7 @@ export function renderExplorer(source: string, opts: ExplorerOptions = {}): stri
   });
   back.addEventListener('click',showMap);
   slider.addEventListener('input',function(){update(parseFloat(slider.value))});
-  stage.addEventListener('wheel',function(e){e.preventDefault();var nv=clamp(parseFloat(slider.value)+(e.deltaY>0?0.2:-0.2),1,4);slider.value=nv;update(nv);},{passive:false});
+  if(body)body.addEventListener('wheel',function(e){e.preventDefault();var nv=clamp(parseFloat(slider.value)+(e.deltaY>0?0.2:-0.2),1,4);slider.value=nv;update(nv);},{passive:false});
   showMap();
   setMode('indent');
 })();
