@@ -172,7 +172,7 @@ export function renderInteractive(doc: Doc): string {
     label.textContent = L<1.5?'第1層 — 形＋名前' : L<2.5?'第2層 — 構成アイコン（ラベル無し）' : L<3.5?'第3層 — アイコン＋ラベル' : '第4層 — ネスト展開（色＝深度）';
   }
   slider.addEventListener('input',function(){update(parseFloat(slider.value))});
-  if(svg)svg.addEventListener('wheel',function(e){e.preventDefault();var nv=clamp(parseFloat(slider.value)+(e.deltaY>0?0.2:-0.2),1,4);slider.value=nv;update(nv);},{passive:false});
+  if(svg)svg.addEventListener('wheel',function(e){e.preventDefault();var nv=clamp(parseFloat(slider.value)+(e.deltaY>0?0.04:-0.04),1,4);slider.value=nv;update(nv);},{passive:false});
   all('.iz .btns button',root).forEach(function(b){b.addEventListener('click',function(){var nv=parseFloat(b.getAttribute('data-l'));slider.value=nv;update(nv);});});
   update(1);
 })();

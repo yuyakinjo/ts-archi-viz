@@ -159,7 +159,7 @@ export function renderExplorer(source: string, opts: ExplorerOptions = {}): stri
   });
   back.addEventListener('click',showMap);
   slider.addEventListener('input',function(){update(parseFloat(slider.value))});
-  if(body)body.addEventListener('wheel',function(e){e.preventDefault();var nv=clamp(parseFloat(slider.value)+(e.deltaY>0?0.2:-0.2),1,4);slider.value=nv;update(nv);},{passive:false});
+  if(body)body.addEventListener('wheel',function(e){e.preventDefault();var nv=clamp(parseFloat(slider.value)+(e.deltaY>0?0.04:-0.04),1,4);slider.value=nv;update(nv);},{passive:false});
   showMap();
   setMode('indent');
 })();
