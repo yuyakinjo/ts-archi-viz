@@ -6,7 +6,11 @@
   "exports": {
     ".": "./src/index.ts"
   },
+  "bin": {
+    "typeviz": "src/cli.ts"
+  },
   "scripts": {
+    "typeviz": "bun src/cli.ts",
     "example:user": "bun examples/user.ts",
     "example:extract": "bun examples/extract-user.ts",
     "test": "bun test",

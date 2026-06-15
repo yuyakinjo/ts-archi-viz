@@ -52,6 +52,29 @@ TypeScript の型を **色・形・シンボル・アイコン** で視覚化し
 - `src/renderModuleMap.ts` — モジュールマップ
 - `src/renderExplorer.ts` — macro↔micro 連続ズーム＋色モード切替
 
+## CLI
+
+```sh
+typeviz <file.ts> [TypeName] [--mode type|module] [--format svg|html]
+                             [--color indent|heatmap] [--expand N] [--out path]
+```
+
+- 型名あり → **type**（その型のカード）、省略 → **module**（型サーフェスのマップ）。
+- `--format html` は CSS を同梱した自己完結ドキュメント（インタラクティブ。ブラウザでそのまま開ける）。
+
+```sh
+# 型カード（静的SVG）
+bun src/cli.ts examples/models.ts User > user.svg
+# 型のインタラクティブ層ズーム（HTML）
+bun src/cli.ts examples/models.ts User --format html > user.html
+# モジュールマップ（静的SVG・ヒートマップ色）
+bun src/cli.ts examples/models.ts --color heatmap > map.svg
+# macro↔micro explorer（HTML）
+bun src/cli.ts examples/models.ts --mode module --format html > explorer.html
+```
+
+> MVP: ソースは単一ファイルとして読みます。他ファイルへの import 先の型は未解決（参照ノードとして表示）。クロスファイル解決は今後対応予定（[#1](https://github.com/yuyakinjo/ts-archi-viz/issues/1)）。
+
 ## 使い方（開発）
 
 ランタイムは [Bun](https://bun.sh) です。
