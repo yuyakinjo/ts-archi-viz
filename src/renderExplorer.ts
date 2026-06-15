@@ -39,6 +39,9 @@ export function renderExplorer(source: string, opts: ExplorerOptions = {}): stri
 .ex .ex-mode{font:inherit;font-size:11px;padding:3px 12px;cursor:pointer;border:1px solid var(--color-border-secondary);border-radius:999px;background:var(--color-background-secondary);color:var(--color-text-secondary)}
 .ex .ex-mode.on{background:var(--color-text-primary);color:var(--color-background-primary);border-color:var(--color-text-primary)}
 .ex .ex-map .mapnode:hover circle{fill-opacity:0.32}
+.ex .ex-map,.ex .ex-detail{transition:opacity .24s ease,transform .24s ease}
+.ex .leaving{opacity:0;transform:scale(1.08)}
+.ex .entering{opacity:0;transform:scale(0.94)}
 .ex .ex-bar{display:flex;align-items:center;gap:12px;justify-content:center;margin-bottom:2px}
 .ex .ex-back{font:inherit;font-size:12px;padding:4px 10px;cursor:pointer;border:1px solid var(--color-border-secondary);border-radius:var(--border-radius-md);background:var(--color-background-secondary);color:var(--color-text-primary)}
 .ex .ex-label{font-size:13px;font-weight:500;color:var(--color-text-primary)}
@@ -109,17 +112,40 @@ export function renderExplorer(source: string, opts: ExplorerOptions = {}): stri
     all('.conn',active).forEach(function(c){c.style.opacity=t34});
     label.textContent = L<1.5?'第1層 — 形＋名前' : L<2.5?'第2層 — 構成アイコン（ラベル無し）' : L<3.5?'第3層 — アイコン＋ラベル' : '第4層 — ネスト展開（色＝深度）';
   }
+  var busy=false;
+  // 拡大＋クロスフェードで滑らかに切り替える
+  function swapView(hideEl, showEl, prep){
+    if(busy)return;
+    busy=true;
+    hideEl.classList.add('leaving');
+    setTimeout(function(){
+      hideEl.style.display='none'; hideEl.classList.remove('leaving');
+      if(prep)prep();
+      showEl.classList.add('entering'); showEl.style.display='';
+      void showEl.offsetWidth; // reflow
+      showEl.classList.remove('entering');
+      busy=false;
+    }, 240);
+  }
   function showMap(){
-    mapWrap.style.display=''; detailWrap.style.display='none'; active=null;
-    titleEl.textContent='モジュールマップ — バブルをクリックして型へズーム';
+    if(detailWrap.style.display==='none'){
+      mapWrap.style.display=''; active=null;
+      titleEl.textContent='モジュールマップ — バブルをクリックして型へズーム';
+      return;
+    }
+    swapView(detailWrap, mapWrap, function(){
+      active=null;
+      titleEl.textContent='モジュールマップ — バブルをクリックして型へズーム';
+    });
   }
   function showDetail(name){
-    all('.detail',root).forEach(function(d){d.style.display = (d.dataset.type===name)?'':'none'});
-    var panel=sel('.detail[data-type="'+name+'"]',root);
-    active = panel ? panel.querySelector('.detailsvg') : null;
-    mapWrap.style.display='none'; detailWrap.style.display='';
-    titleEl.textContent='型: '+name+' — スライダ/ホイールで層1〜4';
-    slider.value=1; update(1); recolor();
+    swapView(mapWrap, detailWrap, function(){
+      all('.detail',root).forEach(function(d){d.style.display = (d.dataset.type===name)?'':'none'});
+      var panel=sel('.detail[data-type="'+name+'"]',root);
+      active = panel ? panel.querySelector('.detailsvg') : null;
+      titleEl.textContent='型: '+name+' — スライダ/ホイールで層1〜4';
+      slider.value=1; update(1); recolor();
+    });
   }
   all('.mapnode',root).forEach(function(g){
     g.addEventListener('click',function(){showDetail(g.getAttribute('data-type'))});
