@@ -1,0 +1,8 @@
+node_modules/
+dist/
+*.tsbuildinfo
+.DS_Store
+
+# 生成物（bun examples/*.ts で再生成できる）
+examples/*.svg
+examples/*.html
